@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import org.mockito.Mockito;
+import java.util.function.BiFunction;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,7 +13,14 @@ class Movie {
     }
 
     enum Type {
-        REGULAR, NEW_RELEASE, CHILDREN;
+        REGULAR(PriceService::computeRegularPrice),
+        NEW_RELEASE(PriceService::computeNewReleasePrice),
+        CHILDREN(PriceService::computeChildrenPrice);
+        public final BiFunction<PriceService, Integer, Integer> priceAlgo;
+
+        Type(BiFunction<PriceService, Integer, Integer> priceAlgo) {
+            this.priceAlgo = priceAlgo;
+        }
     }
 }
 
@@ -41,16 +48,7 @@ class PriceService {
     }
 
     public Integer computePrice(Movie.Type type, int days) {
-        switch (type) {
-            case NEW_RELEASE:
-                return computeNewReleasePrice(days);
-            case REGULAR:
-                return computeRegularPrice(days);
-            case CHILDREN:
-                return computeChildrenPrice(days);
-            default:
-                throw new IllegalArgumentException();
-        }
+        return type.priceAlgo.apply(this, days);
     }
 }
 
