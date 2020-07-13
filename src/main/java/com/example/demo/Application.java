@@ -8,17 +8,25 @@ class Movie {
     }
 
     public int computePrice(int days) {
-        switch (type) {
-            case REGULAR: return days + 1;
-            case NEW_RELEASE: return days * 2;
-            case CHILDREN: return 5;
-            case ELDER: return 1;
-            default: throw new IllegalArgumentException("shouldnt happen.");
-        }
+        return type.computePrice(days);
     }
 
     enum Type {
-        REGULAR, NEW_RELEASE, CHILDREN, ELDER
+        REGULAR {
+            public int computePrice(int days) {
+                return days + 1;
+            }
+        }, NEW_RELEASE {
+            public int computePrice(int days) {
+                return days * 2;
+            }
+        }, CHILDREN {
+            public int computePrice(int days) {
+                return 5;
+            }
+        };
+
+        public abstract int computePrice(int days);
     }
 }
 
